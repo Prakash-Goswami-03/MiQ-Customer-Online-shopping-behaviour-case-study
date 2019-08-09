@@ -1,0 +1,283 @@
+
+# coding: utf-8
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np
+import seaborn as sb
+import matplotlib.pyplot as plt
+get_ipython().magic('matplotlib inline')
+
+
+# In[102]:
+
+
+final_con= pd.read_csv("Problem2_FInalConversions.txt", sep="\t", names=['timestamp','userid','product','cart_amt'])
+final_con.head(10)
+
+
+# In[116]:
+
+
+final_con[final_con['userid']==5942997097932061]
+final_con['userid'].nunique() #41009
+final_con['userid'].count() #79795
+final_con.groupby('userid')['timestamp'].count()
+
+
+# In[121]:
+
+
+#final_con[final_con['userid']==2164499318886260]
+final_con[final_con['userid']==0]
+
+
+# In[29]:
+
+
+final_con.isnull().sum()
+
+
+# In[27]:
+
+
+final_con.count()
+
+
+# In[100]:
+
+
+bh= pd.read_csv("Problem2_Site_BrowingBehavior.txt", sep="\t", names=['timestamp','userid','web sec'])
+bh.head(10)
+
+
+# In[32]:
+
+
+bh.count()
+
+
+# In[34]:
+
+
+bh['web sec'].unique()
+
+
+# In[44]:
+
+
+bh['web sec'].nunique()
+
+
+# In[42]:
+
+
+bh.dtypes
+
+
+# In[47]:
+
+
+bh['userid'].unique()
+
+
+# In[48]:
+
+
+bh['userid'].nunique()
+
+
+# In[49]:
+
+
+# EDA on final Conversion data
+final_con.dtypes
+
+
+# In[50]:
+
+
+final_con['userid'].unique()
+
+
+# In[51]:
+
+
+final_con['userid'].nunique()
+
+
+# In[57]:
+
+
+#convert timestamp column type to timestamp
+from dateutil.parser import parse
+
+
+# In[103]:
+
+
+final_con['timestamp']=[parse(x) for x in final_con['timestamp']]
+
+
+# In[104]:
+
+
+final_con.dtypes
+
+
+# In[65]:
+
+
+final_con['product'].unique()
+
+
+# In[66]:
+
+
+final_con['product'].nunique()
+
+
+# In[67]:
+
+
+final_con['product'].dtypes
+
+
+# In[72]:
+
+
+final_con['product'] = final_con['product'].astype('str') 
+
+
+# In[73]:
+
+
+final_con.dtypes
+
+
+# In[74]:
+
+
+final_con.count()
+
+
+# In[76]:
+
+
+final_con['timestamp'].head(10)
+
+
+# In[77]:
+
+
+final_con['hour'] = final_con['timestamp'].dt.hour
+
+
+# In[78]:
+
+
+final_con['hour'].head(10)
+
+
+# In[89]:
+
+
+final_con['date'] = final_con['timestamp'].dt.date
+
+
+# In[90]:
+
+
+final_con['date'].head(10)
+
+
+# In[87]:
+
+
+final_con['weekday'] = final_con['timestamp'].dt.dayofweek
+
+
+# In[88]:
+
+
+final_con['weekday'].head(10)
+
+
+# In[93]:
+
+
+final_con['day'] = final_con['timestamp'].dt.day
+
+
+# In[94]:
+
+
+final_con['day'].head(10)
+
+
+# In[122]:
+
+
+final_con['product'].nunique()
+
+
+# In[99]:
+
+
+final_con['weekday'].unique()
+
+
+# In[128]:
+
+
+#one Hot Encoding for Final Conversion data
+
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+
+le_product = LabelEncoder()
+#le_make = LabelEncoder()
+final_con['product_encoded'] = le_product.fit_transform(final_con.product(axis=1))
+
+
+# In[131]:
+
+
+final_con['product_encoded'].nunique()
+
+
+# In[132]:
+
+
+final_con.tail(30)
+
+
+# In[146]:
+
+
+### There are multiple products in product column, its a list of products
+final_con[final_con['userid']==0]
+
+
+# In[143]:
+
+
+bh[bh['userid']==0]
+
+
+# In[151]:
+
+
+#Removing all rows with 0 UserId
+dfObj = pd.DataFrame(final_con, columns = ['timestamp' , 'userid', 'product' , 'cart_amt','product_encoded'], index=['a', 'b', 'c' , 'd' , 'e' , 'f'])
+
+final_con=dfObj.drop( dfObj[ dfObj['userid'] == 0 ].index , inplace=True)
+
+
+# In[150]:
+
+
+final_con.head(10)
+
